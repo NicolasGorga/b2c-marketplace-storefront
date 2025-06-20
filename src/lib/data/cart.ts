@@ -3,7 +3,7 @@
 import { sdk } from "../config"
 import medusaError from "@/lib/helpers/medusa-error"
 import { HttpTypes } from "@medusajs/types"
-import { revalidateTag } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
 import {
   getAuthHeaders,
@@ -36,7 +36,8 @@ export async function retrieveCart(cartId?: string) {
       method: "GET",
       query: {
         fields:
-          "*items, *region, *items.product, *items.variant, *items.variant.options, items.variant.options.option.title, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name, *items.product.seller",
+          "*items,*region, *items.product, *items.variant, *items.variant.options, items.variant.options.option.title," +
+          "*items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name, *items.product.seller",
       },
       headers,
       cache: "no-cache",
@@ -275,6 +276,63 @@ export async function applyPromotions(codes: string[]) {
     .catch(medusaError)
 }
 
+export async function removeShippingMethod(shippingMethodId: string) {
+  const cartId = await getCartId()
+
+  if (!cartId) {
+    throw new Error("No existing cart found")
+  }
+
+  const headers = {
+    ...(await getAuthHeaders()),
+    "Content-Type": "application/json",
+    "x-publishable-api-key": process.env
+      .NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY as string,
+  }
+
+  return fetch(
+    `${process.env.MEDUSA_BACKEND_URL}/store/carts/${cartId}/shipping-methods`,
+    {
+      method: "DELETE",
+      body: JSON.stringify({ shipping_method_ids: [shippingMethodId] }),
+      headers,
+    }
+  )
+    .then(async () => {
+      const cartCacheTag = await getCacheTag("carts")
+      revalidateTag(cartCacheTag)
+    })
+    .catch(medusaError)
+}
+
+export async function deletePromotionCode(promoId: string) {
+  const cartId = await getCartId()
+
+  if (!cartId) {
+    throw new Error("No existing cart found")
+  }
+  const headers = {
+    ...(await getAuthHeaders()),
+    "Content-Type": "application/json",
+    "x-publishable-api-key": process.env
+      .NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY as string,
+  }
+
+  return fetch(
+    `${process.env.MEDUSA_BACKEND_URL}/store/carts/${cartId}/promotions`,
+    {
+      method: "DELETE",
+      body: JSON.stringify({ promo_codes: [promoId] }),
+      headers,
+    }
+  )
+    .then(async () => {
+      const cartCacheTag = await getCacheTag("carts")
+      revalidateTag(cartCacheTag)
+    })
+    .catch(medusaError)
+}
+
 // TODO: Pass a POJO instead of a form entity here
 export async function setAddresses(currentState: unknown, formData: FormData) {
   try {
@@ -319,14 +377,12 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
     //     province: formData.get("billing_address.province"),
     //     phone: formData.get("billing_address.phone"),
     //   }
+
     await updateCart(data)
-    const cartCacheTag = await getCacheTag("carts")
-    await revalidateTag(cartCacheTag)
+    await revalidatePath("/cart")
   } catch (e: any) {
     return e.message
   }
-
-  // redirect(`/checkout`)
 }
 
 /**
@@ -357,7 +413,6 @@ export async function placeOrder(cartId?: string) {
   if (cartRes?.order_set) {
     removeCartId()
     redirect(`/order/${cartRes?.order_set.orders[0].id}/confirmed`)
-    // return { orderId: cartRes?.order_set.orders[0].id }
   }
 
   return cartRes.order_set.cart

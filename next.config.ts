@@ -1,9 +1,13 @@
 import type { NextConfig } from "next"
-import createNextIntlPlugin from "next-intl/plugin"
 
 const nextConfig: NextConfig = {
   trailingSlash: false,
   reactStrictMode: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   images: {
     remotePatterns: [
       {
@@ -31,10 +35,12 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "i.imgur.com",
       },
+      {
+        protocol: "https",
+        hostname: "s3.eu-central-1.amazonaws.com",
+      },
     ],
   },
 }
 
-const withNextIntl = createNextIntlPlugin()
-
-export default withNextIntl(nextConfig)
+module.exports = nextConfig

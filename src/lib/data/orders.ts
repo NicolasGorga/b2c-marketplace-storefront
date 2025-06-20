@@ -49,7 +49,10 @@ export const listOrders = async (
   return sdk.client
     .fetch<{
       orders: Array<
-        HttpTypes.StoreOrder & { seller: { id: string; name: string } }
+        HttpTypes.StoreOrder & {
+          seller: { id: string; name: string; reviews?: any[] }
+          reviews: any[]
+        }
       >
     }>(`/store/orders`, {
       method: "GET",
@@ -57,7 +60,8 @@ export const listOrders = async (
         limit,
         offset,
         order: "-created_at",
-        fields: "*items,+items.metadata,*items.variant,*items.product,*seller",
+        fields:
+          "*items,+items.metadata,*items.variant,*items.product,*seller,*reviews",
         ...filters,
       },
       headers,

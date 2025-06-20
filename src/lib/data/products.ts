@@ -62,7 +62,7 @@ export const listProducts = async ({
 
   return sdk.client
     .fetch<{
-      products: HttpTypes.StoreProduct[]
+      products: (HttpTypes.StoreProduct & { seller?: SellerProps })[]
       count: number
     }>(`/store/products`, {
       method: "GET",
@@ -73,17 +73,38 @@ export const listProducts = async ({
         offset,
         region_id: region?.id,
         fields:
-          "*variants.calculated_price,+variants.inventory_quantity,*seller,*variants,*seller.products",
+          "*variants.calculated_price,+variants.inventory_quantity,*seller,*variants,*seller.products,*seller.reviews,*seller.reviews.customer",
         ...queryParams,
       },
       headers,
       cache: "no-cache",
     })
-    .then(({ products, count }) => {
+    .then(({ products: productsRaw, count }) => {
+      const products = productsRaw.filter(
+        (product) => product.seller?.store_status !== "SUSPENDED"
+      )
+
       const nextPage = count > offset + limit ? pageParam + 1 : null
+
+      const response = products.filter((prod) => {
+        // @ts-ignore Property 'seller' exists but TypeScript doesn't recognize it
+        const reviews = prod.seller?.reviews.filter((item) => !!item) ?? []
+        return (
+          // @ts-ignore Property 'seller' exists but TypeScript doesn't recognize it
+          prod?.seller && {
+            ...prod,
+            seller: {
+              // @ts-ignore Property 'seller' exists but TypeScript doesn't recognize it
+              ...prod.seller,
+              reviews,
+            },
+          }
+        )
+      })
+
       return {
         response: {
-          products,
+          products: response,
           count,
         },
         nextPage: nextPage,

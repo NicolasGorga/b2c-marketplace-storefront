@@ -1,6 +1,7 @@
 import { ProductDetails, ProductGallery } from "@/components/organisms"
 import { listProducts } from "@/lib/data/products"
 import { HomeProductSection } from "../HomeProductSection/HomeProductSection"
+import NotFound from "@/app/not-found"
 
 export const ProductDetailsPage = async ({
   handle,
@@ -16,6 +17,10 @@ export const ProductDetailsPage = async ({
 
   if (!prod) return null
 
+  if (prod.seller?.store_status === "SUSPENDED") {
+    return NotFound()
+  }
+
   return (
     <>
       <div className="flex flex-col md:flex-row lg:gap-12">
@@ -30,8 +35,9 @@ export const ProductDetailsPage = async ({
         <HomeProductSection
           heading="More from this seller"
           products={prod.seller?.products}
+          seller_handle={prod.seller?.handle}
+          locale={locale}
         />
-        {/* <HomeProductSection heading="You might also like" /> */}
       </div>
     </>
   )

@@ -11,7 +11,7 @@ import ErrorMessage from "@/components/molecules/ErrorMessage/ErrorMessage"
 import Spinner from "@/icons/spinner"
 import ShippingAddress from "@/components/organisms/ShippingAddress/ShippingAddress"
 import { CheckCircleSolid } from "@medusajs/icons"
-import { Link } from "@/i18n/routing"
+import LocalizedClientLink from "@/components/molecules/LocalizedLink/LocalizedLink"
 
 export const CartAddressSection = ({
   cart,
@@ -73,7 +73,7 @@ export const CartAddressSection = ({
       <form
         action={async (data) => {
           await formAction(data)
-          router.replace(`/checkout`)
+          router.replace(`/checkout?step=delivery`)
         }}
       >
         {isOpen ? (
@@ -129,11 +129,11 @@ export const CartAddressSection = ({
           </div>
         )}
         {isAddress && !searchParams.get("step") && (
-          <Link href="/checkout?step=delivery">
+          <LocalizedClientLink href="/checkout?step=delivery">
             <Button className="mt-6" variant="tonal">
               Continue to Delivery
             </Button>
-          </Link>
+          </LocalizedClientLink>
         )}
       </form>
     </div>

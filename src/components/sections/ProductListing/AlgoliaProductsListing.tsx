@@ -9,26 +9,24 @@ import {
 import { client } from "@/lib/client"
 import { Configure, useHits } from "react-instantsearch"
 import { InstantSearchNext } from "react-instantsearch-nextjs"
-import { FacetFilters } from "algoliasearch/lite"
 import { useSearchParams } from "next/navigation"
 import { getFacedFilters } from "@/lib/helpers/get-faced-filters"
-import { SelectField } from "@/components/molecules"
 import useUpdateSearchParams from "@/hooks/useUpdateSearchParams"
 import { PRODUCT_LIMIT } from "@/const"
 import { ProductListingSkeleton } from "@/components/organisms/ProductListingSkeleton/ProductListingSkeleton"
 
-const selectOptions = [
-  { label: "Newest", value: "created_at" },
-  { label: "Price: Low to High", value: "price_asc" },
-  { label: "Price: High to Low", value: "price_desc" },
-]
-
 export const AlgoliaProductsListing = ({
   category_id,
   collection_id,
+  seller_handle,
+  locale = process.env.NEXT_PUBLIC_DEFAULT_REGION,
+  currency_code,
 }: {
   category_id?: string
   collection_id?: string
+  locale?: string
+  seller_handle?: string
+  currency_code?: string
 }) => {
   const searchParamas = useSearchParams()
 
@@ -36,9 +34,19 @@ export const AlgoliaProductsListing = ({
   const page: number = +(searchParamas.get("page") || 1)
   const query: string = searchParamas.get("query") || ""
 
-  const filters = category_id
-    ? `categories.id:${category_id} collections.id:${collection_id} ${facetFilters}`
-    : `${facetFilters.replace("AND", "")}`
+  const filters = `${
+    seller_handle
+      ? `NOT seller:null AND seller.handle:${seller_handle} AND `
+      : "NOT seller:null AND "
+  }NOT seller.store_status:SUSPENDED AND supported_countries:${locale}${
+    category_id
+      ? ` AND categories.id:${category_id}${
+          collection_id !== undefined
+            ? ` AND collections.id:${collection_id}`
+            : ""
+        } ${facetFilters}`
+      : ` ${facetFilters}`
+  }`
 
   return (
     <InstantSearchNext searchClient={client} indexName="products">
@@ -48,12 +56,12 @@ export const AlgoliaProductsListing = ({
         filters={filters}
         page={page - 1}
       />
-      <ProductsListing />
+      <ProductsListing currency_code={currency_code} />
     </InstantSearchNext>
   )
 }
 
-const ProductsListing = () => {
+const ProductsListing = ({ currency_code }: { currency_code?: string }) => {
   const {
     items,
     results,
@@ -83,11 +91,11 @@ const ProductsListing = () => {
       <div className="hidden md:block">
         <ProductListingActiveFilters />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 mt-6">
+      <div className="md:flex gap-4">
         <div>
           <AlgoliaProductSidebar />
         </div>
-        <div className="w-full col-span-3">
+        <div className="w-full">
           {!items.length ? (
             <div className="text-center w-full my-10">
               <h2 className="uppercase text-primary heading-lg">no results</h2>
@@ -97,9 +105,13 @@ const ProductsListing = () => {
             </div>
           ) : (
             <div className="w-full">
-              <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+              <ul className="flex flex-wrap gap-4">
                 {items.map((hit) => (
-                  <ProductCard key={hit.objectID} product={hit} />
+                  <ProductCard
+                    key={hit.objectID}
+                    product={hit}
+                    currency_code={currency_code}
+                  />
                 ))}
               </ul>
             </div>

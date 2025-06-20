@@ -1,6 +1,8 @@
 "use server"
+import { revalidatePath } from "next/cache"
 import { sdk } from "../config"
 import { getAuthHeaders } from "./cookies"
+import { HttpTypes } from "@medusajs/types"
 
 export type Review = {
   id: string
@@ -9,9 +11,15 @@ export type Review = {
     name: string
     photo: string
   }
+  reference: string
   customer_note: string
   rating: number
   updated_at: string
+}
+
+export type Order = HttpTypes.StoreOrder & {
+  seller: { id: string; name: string; reviews?: any[] }
+  reviews: any[]
 }
 
 const getReviews = async () => {
@@ -21,6 +29,7 @@ const getReviews = async () => {
 
   const reviews = await sdk.client.fetch("/store/reviews", {
     headers,
+    query: { fields: "*seller,+customer.id,+order_id" },
     method: "GET",
   })
 
@@ -42,7 +51,10 @@ const createReview = async (review: any) => {
       method: "POST",
       body: JSON.stringify(review),
     }
-  )
+  ).then((res) => {
+    revalidatePath("/user/reviews")
+    return res
+  })
 
   return response.json()
 }

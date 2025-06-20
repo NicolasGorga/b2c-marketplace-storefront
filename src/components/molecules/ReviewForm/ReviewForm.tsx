@@ -12,11 +12,11 @@ import { Button } from "@/components/atoms"
 import { InteractiveStarRating } from "@/components/atoms/InteractiveStarRating/InteractiveStarRating"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { createReview } from "@/lib/data/reviews"
+import { createReview, Order, Review } from "@/lib/data/reviews"
 
 interface Props {
   handleClose?: () => void
-  sellerId: string
+  seller: Order
 }
 
 export const ReviewForm: React.FC<Props> = ({ ...props }) => {
@@ -36,7 +36,7 @@ export const ReviewForm: React.FC<Props> = ({ ...props }) => {
   )
 }
 
-const Form: React.FC<Props> = ({ handleClose, sellerId }) => {
+const Form: React.FC<Props> = ({ handleClose, seller }) => {
   const [error, setError] = useState<string>()
   const {
     watch,
@@ -48,9 +48,10 @@ const Form: React.FC<Props> = ({ handleClose, sellerId }) => {
 
   const submit = async (data: FieldValues) => {
     const body = {
+      order_id: seller.id,
       rating: data.rating,
       reference: "seller",
-      reference_id: sellerId,
+      reference_id: seller.seller.id,
       customer_note: data.opinion,
     }
 
@@ -102,7 +103,7 @@ const Form: React.FC<Props> = ({ handleClose, sellerId }) => {
                 errors.opinion?.message ? "bottom-8" : "bottom-3 "
               )}
             >
-              {`${lettersCount} / 1000`}
+              {`${lettersCount} / 400`}
             </div>
             {errors.opinion?.message && (
               <p className="label-sm text-negative">

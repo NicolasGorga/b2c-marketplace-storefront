@@ -170,6 +170,7 @@ export const addCustomerAddress = async (formData: FormData): Promise<any> => {
     postal_code: formData.get("postal_code") as string,
     country_code: formData.get("country_code") as string,
     phone: formData.get("phone") as string,
+    province: formData.get("province") as string,
     is_default_billing: Boolean(formData.get("isDefaultBilling")),
     is_default_shipping: Boolean(formData.get("isDefaultShipping")),
   }

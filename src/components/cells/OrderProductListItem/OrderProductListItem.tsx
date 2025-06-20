@@ -2,7 +2,7 @@ import { Divider } from "@/components/atoms"
 import { convertToLocale } from "@/lib/helpers/money"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
-import Link from "next/link"
+import LocalizedClientLink from "@/components/molecules/LocalizedLink/LocalizedLink"
 import { Fragment } from "react"
 
 export const OrderProductListItem = ({
@@ -18,18 +18,28 @@ export const OrderProductListItem = ({
     {withDivider && <Divider className="mt-4" />}
     <li className={cn("flex items-center", withDivider && "mt-4")}>
       <div className="w-[66px] h-24 relative rounded-xs overflow-hidden">
-        <Image src={item.thumbnail} alt={item.title} fill objectFit="cover" />
+        {item.thumbnail ? (
+          <Image src={item.thumbnail} alt={item.title} fill objectFit="cover" />
+        ) : (
+          <Image
+            src={"/images/placeholder.svg"}
+            alt={item.title}
+            width={66}
+            height={66}
+            className="opacity-25"
+          />
+        )}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-5 w-full px-4 sm:gap-4">
         <div className="sm:col-span-2">
           <p className="label-md text-secondary">{item.product_title}</p>
-          <Link
-            href={`/products/${item.variant.product.handle}`}
+          <LocalizedClientLink
+            href={`/products/${item.variant?.product?.handle}`}
             target="_blank"
             className="heading-xs text-primary"
           >
             {item.variant?.product?.title}
-          </Link>
+          </LocalizedClientLink>
         </div>
         <div className="sm:col-span-2 flex flex-col justify-center">
           <p className="label-md text-secondary">

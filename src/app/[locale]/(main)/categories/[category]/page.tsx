@@ -6,6 +6,7 @@ import type { Metadata } from "next"
 import { generateCategoryMetadata } from "@/lib/helpers/seo"
 import { Breadcrumbs } from "@/components/atoms"
 import { AlgoliaProductsListing, ProductListing } from "@/components/sections"
+import { notFound } from "next/navigation"
 
 const ALGOLIA_ID = process.env.NEXT_PUBLIC_ALGOLIA_ID
 const ALGOLIA_SEARCH_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY
@@ -27,16 +28,21 @@ async function Category({
 }: {
   params: Promise<{
     category: string
+    locale: string
   }>
 }) {
-  const { category: handle } = await params
+  const { category: handle, locale } = await params
 
   const category = await getCategoryByHandle([handle])
 
+  if (!category) {
+    return notFound()
+  }
+
   const breadcrumbsItems = [
     {
-      path: category.handle,
-      label: category.name,
+      path: category?.handle,
+      label: category?.name,
     },
   ]
 
@@ -52,7 +58,7 @@ async function Category({
         {!ALGOLIA_ID || !ALGOLIA_SEARCH_KEY ? (
           <ProductListing category_id={category.id} showSidebar />
         ) : (
-          <AlgoliaProductsListing category_id={category.id} />
+          <AlgoliaProductsListing category_id={category.id} locale={locale} />
         )}
       </Suspense>
     </main>

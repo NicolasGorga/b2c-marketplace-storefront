@@ -55,6 +55,7 @@ const Form: React.FC<Props> = ({ regions, handleClose }) => {
     handleSubmit,
     register,
     formState: { errors },
+    watch,
   } = useFormContext()
 
   const region = {
@@ -146,6 +147,7 @@ const Form: React.FC<Props> = ({ regions, handleClose }) => {
             <CountrySelect
               region={region as HttpTypes.StoreRegion}
               {...register("countryCode")}
+              value={watch("countryCode")}
               className="h-12"
             />
             {errors.countryCode && (

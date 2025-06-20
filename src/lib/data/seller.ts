@@ -5,9 +5,17 @@ export const getSellerByHandle = async (handle: string) => {
   return sdk.client
     .fetch<{ seller: SellerProps }>(`/store/seller/${handle}`, {
       query: {
-        fields: "+created_at,+rating,+email",
+        fields: "+created_at,+rating,+email,*reviews,*reviews.customer",
       },
-      cache: "no-cache",
+      cache: "force-cache",
     })
-    .then(({ seller }) => seller)
+    .then(({ seller }) => {
+      const response = {
+        ...seller,
+        reviews: seller.reviews?.filter((item) => item !== null) ?? [],
+      }
+
+      return response as SellerProps
+    })
+    .catch(() => [])
 }

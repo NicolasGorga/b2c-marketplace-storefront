@@ -20,7 +20,7 @@ for <a href="https://github.com/mercurjs/mercur">Mercur</a> - Open Source Market
   </p> 
 </div>
 
-## B2C Storefront for Marketplace [Under development]
+## B2C Storefront for Marketplace
 
 Customizable storefront designed for B2C with all elements including browsing and buying products across multiple vendors at once.
 
@@ -30,12 +30,9 @@ Ready to go:
 - Listing
 - Product Page
 - Shopping Cart
-- Seller Page - Moved to external <a href="https://github.com/mercurjs/vendor-panel">VendorPanel</a>
-
-Work in progress:
-
+- Seller Page
+- Selling Hub - Moved to external <a href="https://github.com/mercurjs/vendor-panel">VendorPanel</a>
 - Wishlist
-- Selling Hub
 
 # Part of Mercur
 
@@ -96,6 +93,8 @@ NEXT_PUBLIC_SITE_DESCRIPTION="Fleek Markeplace"
 NEXT_PUBLIC_ALGOLIA_ID=supersecret
 # Algolia Search API Key
 NEXT_PUBLIC_ALGOLIA_SEARCH_KEY=supersecret
+#TalkJS APP ID
+NEXT_PUBLIC_TALKJS_APP_ID=<your talkjs app id>
 ```
 
 &nbsp;
@@ -111,3 +110,4 @@ npm run dev
 ### Guides
 
 <a href="https://www.algolia.com/doc/guides/security/api-keys/" target="_blank">How to get Aloglia Keys</a>
+<a href="https://talkjs.com/docs/Reference/Concepts/Sessions/" target="_blank">How to get TalkJs App ID</a>

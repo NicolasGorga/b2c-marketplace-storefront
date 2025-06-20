@@ -3,17 +3,26 @@ import { Suspense } from "react"
 
 import { Breadcrumbs } from "@/components/atoms"
 import { AlgoliaProductsListing, ProductListing } from "@/components/sections"
+import { getRegion } from "@/lib/data/regions"
 
 const ALGOLIA_ID = process.env.NEXT_PUBLIC_ALGOLIA_ID
 const ALGOLIA_SEARCH_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY
 
-async function AllCategories() {
+async function AllCategories({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+
   const breadcrumbsItems = [
     {
       path: "/",
       label: "All Products",
     },
   ]
+
+  const currency_code = (await getRegion(locale))?.currency_code || "usd"
 
   return (
     <main className="container">
@@ -25,9 +34,12 @@ async function AllCategories() {
 
       <Suspense fallback={<ProductListingSkeleton />}>
         {!ALGOLIA_ID || !ALGOLIA_SEARCH_KEY ? (
-          <ProductListing showSidebar />
+          <ProductListing showSidebar locale={locale} />
         ) : (
-          <AlgoliaProductsListing />
+          <AlgoliaProductsListing
+            locale={locale}
+            currency_code={currency_code}
+          />
         )}
       </Suspense>
     </main>

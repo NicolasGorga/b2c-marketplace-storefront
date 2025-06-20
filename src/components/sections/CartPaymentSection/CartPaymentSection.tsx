@@ -127,7 +127,7 @@ const CartPaymentSection = ({
           {!isOpen && paymentReady && <CheckCircleSolid />}
           Payment
         </Heading>
-        {!isOpen && paymentReady && (
+        {!isOpen && (
           <Text>
             <Button onClick={handleEdit} variant="tonal">
               Edit
@@ -189,6 +189,7 @@ const CartPaymentSection = ({
           <Button
             onClick={handleSubmit}
             variant="tonal"
+            loading={isLoading}
             disabled={
               (isStripe && !cardComplete) ||
               (!selectedPaymentMethod && !paidByGiftcard)
