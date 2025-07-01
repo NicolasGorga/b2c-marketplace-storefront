@@ -29,6 +29,7 @@ export const ProfileDetailsForm: React.FC<Props> = ({
       firstName: "",
       lastName: "",
       phone: "",
+      email: "",
     },
   })
 
@@ -86,6 +87,7 @@ const Form: React.FC<Props> = ({ handleClose }) => {
             error={errors.phone as FieldError}
             {...register("phone")}
           />
+          <LabeledInput label="Email" disabled {...register("email")} />
         </div>
         {error && <p className="label-md text-negative">{error}</p>}
         <Button className="w-full ">Save</Button>

@@ -1,6 +1,5 @@
 "use server"
 
-import medusaError from "../helpers/medusa-error"
 import { sdk } from "../config"
 import { HttpTypes } from "@medusajs/types"
 import { revalidateTag } from "next/cache"
@@ -37,7 +36,7 @@ export const retrieveCustomer =
         },
         headers,
         next,
-        cache: "no-cache",
+        cache: "force-cache",
       })
       .then(({ customer }) => customer)
       .catch(() => null)
@@ -252,4 +251,47 @@ export const updateCustomerAddress = async (
     .catch((err) => {
       return { success: false, error: err.toString() }
     })
+}
+
+export const updateCustomerPassword = async (
+  password: string,
+  token: string
+): Promise<any> => {
+  const res = await fetch(
+    `${process.env.MEDUSA_BACKEND_URL}/auth/customer/emailpass/update`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ password }),
+    }
+  )
+    .then(async () => {
+      await removeAuthToken()
+      const customerCacheTag = await getCacheTag("customers")
+      revalidateTag(customerCacheTag)
+      return { success: true, error: null }
+    })
+    .catch((err: any) => {
+      return { success: false, error: err.toString() }
+    })
+
+  return res
+}
+
+export const sendResetPasswordEmail = async (email: string) => {
+  const res = await sdk.auth
+    .resetPassword("customer", "emailpass", {
+      identifier: email,
+    })
+    .then(() => {
+      return { success: true, error: null }
+    })
+    .catch((err: any) => {
+      return { success: false, error: err.toString() }
+    })
+
+  return res
 }

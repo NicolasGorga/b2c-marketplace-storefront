@@ -148,7 +148,7 @@ const CartShippingMethodsSection: React.FC<ShippingProps> = ({
       acc[sellerId] = []
     }
 
-    acc[sellerId].push(method)
+    acc[sellerId]?.push(method)
     return acc
   }, {})
 
@@ -164,10 +164,10 @@ const CartShippingMethodsSection: React.FC<ShippingProps> = ({
 
   return (
     <div className="border p-4 rounded-sm bg-ui-bg-interactive">
-      {missingModal && (
+      {/* {missingModal && (
         <Modal
           heading="Missing seller shipping option"
-          onClose={() => router.push("/cart")}
+          onClose={() => router.push(`/${pathname.split("/")[1]}/cart`)}
         >
           <div className="p-4">
             <h2 className="heading-sm">
@@ -190,7 +190,7 @@ const CartShippingMethodsSection: React.FC<ShippingProps> = ({
             </p>
           </div>
         </Modal>
-      )}
+      )} */}
       <div className="flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"

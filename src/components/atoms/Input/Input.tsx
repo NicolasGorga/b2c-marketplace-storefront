@@ -2,6 +2,8 @@
 import { cn } from "@/lib/utils"
 
 import { CloseIcon } from "@/icons"
+import { useEffect, useState } from "react"
+import { EyeMini, EyeSlashMini } from "@medusajs/icons"
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -20,9 +22,21 @@ export function Input({
   changeValue,
   ...props
 }: InputProps) {
+  const [showPassword, setShowPassword] = useState(false)
+  const [inputType, setInputType] = useState(props.type)
   let paddingY = ""
   if (icon) paddingY += "pl-[46px] "
   if (clearable) paddingY += "pr-[38px]"
+
+  useEffect(() => {
+    if (props.type === "password" && showPassword) {
+      setInputType("text")
+    }
+
+    if (props.type === "password" && !showPassword) {
+      setInputType("password")
+    }
+  }, [props.type, showPassword])
 
   const changeHandler = (value: string) => {
     if (changeValue) changeValue(value)
@@ -53,6 +67,7 @@ export function Input({
           value={props.value}
           onChange={(e) => changeHandler(e.target.value)}
           {...props}
+          type={inputType}
         />
         {clearable && props.value && (
           <span
@@ -61,6 +76,15 @@ export function Input({
           >
             <CloseIcon />
           </span>
+        )}
+        {props.type === "password" && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="text-ui-fg-subtle px-4 focus:outline-none transition-all duration-150 outline-none focus:text-ui-fg-base absolute right-0 top-4"
+          >
+            {showPassword ? <EyeMini /> : <EyeSlashMini />}
+          </button>
         )}
       </div>
     </label>

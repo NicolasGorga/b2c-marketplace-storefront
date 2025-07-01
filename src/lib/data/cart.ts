@@ -269,9 +269,14 @@ export async function applyPromotions(codes: string[]) {
 
   return sdk.store.cart
     .update(cartId, { promo_codes: codes }, {}, headers)
-    .then(async () => {
+    .then(async ({ cart }) => {
       const cartCacheTag = await getCacheTag("carts")
       revalidateTag(cartCacheTag)
+      // @ts-ignore
+      const applied = cart.promotions?.some((promotion: any) =>
+        codes.includes(promotion.code)
+      )
+      return applied
     })
     .catch(medusaError)
 }
@@ -411,6 +416,8 @@ export async function placeOrder(cartId?: string) {
     .catch(medusaError)
 
   if (cartRes?.order_set) {
+    revalidatePath("/user/reviews")
+    revalidatePath("/user/orders")
     removeCartId()
     redirect(`/order/${cartRes?.order_set.orders[0].id}/confirmed`)
   }

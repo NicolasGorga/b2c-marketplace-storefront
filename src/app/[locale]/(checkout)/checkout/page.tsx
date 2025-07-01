@@ -8,6 +8,7 @@ import { retrieveCart } from "@/lib/data/cart"
 import { retrieveCustomer } from "@/lib/data/customer"
 import { listCartShippingMethods } from "@/lib/data/fulfillment"
 import { listCartPaymentMethods } from "@/lib/data/payment"
+import { retrieveRegion } from "@/lib/data/regions"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
@@ -38,7 +39,7 @@ async function CheckoutPageContent({}) {
     return notFound()
   }
 
-  const shippingMethods = await listCartShippingMethods(cart.id)
+  const shippingMethods = await listCartShippingMethods(cart.id, false)
   const paymentMethods = await listCartPaymentMethods(cart.region?.id ?? "")
   const customer = await retrieveCustomer()
 
