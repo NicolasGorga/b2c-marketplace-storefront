@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid"
 import tailwindConfig from "../../../../tailwind.config"
 import { ArrowRightIcon } from "@/icons"
 import Link from "next/link"
+
 type HeroProps = {
   image: string
   heading: string
