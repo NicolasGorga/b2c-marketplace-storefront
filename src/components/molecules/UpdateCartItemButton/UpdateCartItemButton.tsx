@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms"
 import { updateLineItem } from "@/lib/data/cart"
+import { toast } from "@/lib/helpers/toast"
 import { useState } from "react"
 
 export const UpdateCartItemButton = ({
@@ -21,9 +22,20 @@ export const UpdateCartItemButton = ({
     quantity: number
   }) => {
     setIsChanging(true)
-    await updateLineItem({ lineId, quantity }).finally(() => {
+
+    try {
+      await updateLineItem({ lineId, quantity })
+    } catch (error: any) {
+      toast.error({
+        title: "Error updating cart",
+        description: error.message.replace(
+          "Error setting up the request: ",
+          ""
+        ),
+      })
+    } finally {
       setIsChanging(false)
-    })
+    }
   }
   return (
     <div className="flex items-center gap-4 mt-2">

@@ -20,11 +20,18 @@ export const ParcelAccordion = ({
   orders: any[]
   defaultOpen?: boolean
 }) => {
+  const subtotal = orders
+    .map((order) => order.items)
+    .flat()
+    .reduce((acc, curr) => acc + curr.total, 0)
+
+  const shipping_total = total - subtotal
+
   return (
     <>
       <div className="grid grid-cols-2 sm:grid-cols-5 text-secondary border bg-component-secondary py-6 px-4 rounded-sm w-full">
         <div className="sm:col-span-4 flex flex-col lg:flex-row lg:items-center justify-between lg:gap-4 sm:pr-10">
-          <h2 className="heading-sm truncate">ORDER {orderDisplayId}</h2>
+          <h2 className="heading-sm truncate">ORDER SET {orderDisplayId}</h2>
           <h2 className="label-md">
             Order date:{" "}
             <span className="text-primary lg:block xl:inline-block">
@@ -54,6 +61,7 @@ export const ParcelAccordion = ({
               order={order}
               index={index + 1}
               currency_code={currency_code}
+              shipping_total={shipping_total}
             />
           ))}
         </ul>

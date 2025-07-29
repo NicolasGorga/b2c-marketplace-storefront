@@ -61,6 +61,7 @@ export const Header = async () => {
           </LocalizedClientLink>
         </div>
         <div className="flex items-center justify-end gap-2 lg:gap-4 w-full lg:w-1/3 py-2">
+          <CountrySelector regions={regions} />
           {user && <MessageButton />}
           <UserDropdown user={user} />
           {user && (
@@ -75,7 +76,6 @@ export const Header = async () => {
           )}
 
           <CartDropdown cart={cart} />
-          <CountrySelector regions={regions} />
         </div>
       </div>
       <Navbar categories={categories} />

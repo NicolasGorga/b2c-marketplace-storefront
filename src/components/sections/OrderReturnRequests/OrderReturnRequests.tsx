@@ -10,11 +10,13 @@ export const OrderReturnRequests = ({
   user,
   page,
   currentReturn,
+  returnReasons,
 }: {
   returns: any[]
   user: any
   page: string
   currentReturn: string
+  returnReasons: any[]
 }) => {
   const pages = Math.ceil(returns.length / LIMIT)
   const currentPage = +page || 1
@@ -45,6 +47,7 @@ export const OrderReturnRequests = ({
           item={item}
           user={user}
           defaultOpen={currentReturn === item.id}
+          returnReason={returnReasons}
         />
       ))}
       <div className="mt-8 flex justify-center">

@@ -36,7 +36,7 @@ export default async function UserPage({
           </LocalizedClientLink>
           <div className="sm:flex items-center justify-between">
             <h1 className="heading-md uppercase my-8">
-              Order #{orderSet.display_id}
+              Order set #{orderSet.display_id}
             </h1>
             <p className="label-md text-secondary">
               Order date:{" "}

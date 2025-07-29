@@ -6,14 +6,17 @@ export const getSellerByHandle = async (handle: string) => {
     .fetch<{ seller: SellerProps }>(`/store/seller/${handle}`, {
       query: {
         fields:
-          "+created_at,+rating,+email,*reviews,*reviews.customer,*reviews.seller",
+          "+created_at,+email,+reviews.seller.name,+reviews.rating,+reviews.customer_note,+reviews.seller_note,+reviews.created_at,+reviews.updated_at,+reviews.customer.first_name,+reviews.customer.last_name",
       },
-      cache: "force-cache",
+      cache: "no-cache",
     })
     .then(({ seller }) => {
       const response = {
         ...seller,
-        reviews: seller.reviews?.filter((item) => item !== null) ?? [],
+        reviews:
+          seller.reviews
+            ?.filter((item) => item !== null)
+            .sort((a, b) => b.created_at.localeCompare(a.created_at)) ?? [],
       }
 
       return response as SellerProps

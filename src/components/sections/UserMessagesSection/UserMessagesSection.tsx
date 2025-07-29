@@ -6,7 +6,9 @@ import Talk from "talkjs"
 
 export const UserMessagesSection = () => {
   const syncConversation = useCallback((session: Talk.Session) => {
-    const conversation = session.getOrCreateConversation("welcome")
+    const conversation = session.getOrCreateConversation(
+      "my_conversations" + session.me.id
+    )
     conversation.setParticipant(session.me)
     return conversation
   }, [])

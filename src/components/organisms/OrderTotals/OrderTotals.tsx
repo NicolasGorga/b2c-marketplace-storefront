@@ -2,12 +2,9 @@ import { Card, Divider } from "@/components/atoms"
 import { convertToLocale } from "@/lib/helpers/money"
 
 export const OrderTotals = ({ orderSet }: { orderSet: any }) => {
-  const subtotal = orderSet.orders.reduce((acc: number, order: any) => {
-    return acc + order.item_subtotal
-  }, 0)
-
   const delivery = orderSet.shipping_total
-  const total = subtotal + delivery
+  const subtotal = orderSet.total - delivery
+  const total = orderSet.total
 
   const currency_code = orderSet.payment_collection.currency_code
 

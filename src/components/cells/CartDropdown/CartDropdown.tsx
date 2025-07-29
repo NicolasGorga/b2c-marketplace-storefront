@@ -26,7 +26,22 @@ export const CartDropdown = ({
   const pathname = usePathname()
 
   const total = convertToLocale({
-    amount: cart?.item_total || 0,
+    amount: cart?.total || 0,
+    currency_code: cart?.currency_code || "eur",
+  })
+
+  const delivery = convertToLocale({
+    amount: cart?.shipping_subtotal || 0,
+    currency_code: cart?.currency_code || "eur",
+  })
+
+  const tax = convertToLocale({
+    amount: cart?.tax_total || 0,
+    currency_code: cart?.currency_code || "eur",
+  })
+
+  const items = convertToLocale({
+    amount: cart?.item_subtotal || 0,
     currency_code: cart?.currency_code || "eur",
   })
 
@@ -80,6 +95,15 @@ export const CartDropdown = ({
                   ))}
                 </div>
                 <div className="pt-4">
+                  <div className="text-secondary flex justify-between items-center">
+                    Items <p className="label-md text-primary">{items}</p>
+                  </div>
+                  <div className="text-secondary flex justify-between items-center">
+                    Delivery <p className="label-md text-primary">{delivery}</p>
+                  </div>
+                  <div className="text-secondary flex justify-between items-center">
+                    Tax <p className="label-md text-primary">{tax}</p>
+                  </div>
                   <div className="text-secondary flex justify-between items-center">
                     Total <p className="label-xl text-primary">{total}</p>
                   </div>

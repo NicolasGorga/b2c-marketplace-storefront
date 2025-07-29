@@ -19,7 +19,7 @@ export const CartItems = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
       />
       <CartItemsFooter
         currency_code={cart.currency_code}
-        price={cart.shipping_total}
+        price={cart.shipping_subtotal}
       />
     </div>
   ))

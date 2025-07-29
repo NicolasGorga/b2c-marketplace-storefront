@@ -23,7 +23,6 @@ export const AlgoliaProductsListing = ({
   collection_id,
   seller_handle,
   locale = process.env.NEXT_PUBLIC_DEFAULT_REGION,
-  currency_code,
 }: {
   category_id?: string
   collection_id?: string
@@ -70,6 +69,7 @@ const ProductsListing = ({ locale }: { locale?: string }) => {
       queryParams: {
         fields:
           "*variants.calculated_price,*seller.reviews,-thumbnail,-images,-type,-tags,-variants.options,-options,-collection,-collection_id",
+        limit: 999,
       },
     }).then(({ response }) => {
       setProd(
@@ -84,11 +84,15 @@ const ProductsListing = ({ locale }: { locale?: string }) => {
   if (!results?.processingTimeMS) return <ProductListingSkeleton />
 
   const page: number = +(searchParamas.get("page") || 1)
-  const products = items
+  const filteredProducts = items.filter((pr) =>
+    prod?.some((p: any) => p.id === pr.objectID)
+  )
+
+  const products = filteredProducts
     .filter((pr) => prod?.some((p: any) => p.id === pr.objectID))
     .slice((page - 1) * PRODUCT_LIMIT, page * PRODUCT_LIMIT)
 
-  const count = products?.length || 0
+  const count = filteredProducts?.length || 0
   const pages = Math.ceil(count / PRODUCT_LIMIT) || 1
 
   return (

@@ -20,8 +20,8 @@ const Review = ({ cart }: { cart: any }) => {
       </div>
       <div className="w-full mb-6 border rounded-sm p-4">
         <CartSummary
-          item_total={cart?.item_total || 0}
-          shipping_total={cart?.shipping_total || 0}
+          item_total={cart?.item_subtotal || 0}
+          shipping_total={cart?.shipping_subtotal || 0}
           total={cart?.total || 0}
           currency_code={cart?.currency_code || ""}
           tax={cart?.tax_total || 0}

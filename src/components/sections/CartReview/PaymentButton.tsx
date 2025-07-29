@@ -7,7 +7,8 @@ import { HttpTypes } from "@medusajs/types"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
 import React, { useEffect, useState } from "react"
 import { Button } from "@/components/atoms"
-import { useRouter } from "next/navigation"
+import { orderErrorFormatter } from "@/lib/helpers/order-error-formatter"
+import { toast } from "@/lib/helpers/toast"
 
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
@@ -151,20 +152,23 @@ const StripePaymentButton = ({
       >
         Place order
       </Button>
-      <ErrorMessage
+      {/* <ErrorMessage
         error={errorMessage}
         data-testid="stripe-payment-error-message"
-      />
+      /> */}
     </>
   )
 }
 
 const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  // const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const onPaymentCompleted = async () => {
     await placeOrder().catch((err) => {
-      setErrorMessage(err.message !== "NEXT_REDIRECT" ? err.message : null)
+      // toast.error({
+      //   title: "Error placing order",
+      //   description: "Please try again later",
+      // })
     })
   }
 
@@ -177,10 +181,10 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
       <Button disabled={notReady} onClick={handlePayment} className="w-full">
         Place order
       </Button>
-      <ErrorMessage
+      {/* <ErrorMessage
         error={errorMessage}
         data-testid="manual-payment-error-message"
-      />
+      /> */}
     </>
   )
 }

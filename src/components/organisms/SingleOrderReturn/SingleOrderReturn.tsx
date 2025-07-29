@@ -17,10 +17,12 @@ export const SingleOrderReturn = ({
   item,
   user,
   defaultOpen,
+  returnReason,
 }: {
   item: any
   user: any
   defaultOpen: boolean
+  returnReason: any[]
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen)
   const [height, setHeight] = useState(0)
@@ -34,11 +36,23 @@ export const SingleOrderReturn = ({
     }, 100)
   }, [])
 
-  const filteredItems = item.order.items.filter((orderItem: any) =>
-    item.line_items.some(
-      (lineItem: any) => lineItem.line_item_id === orderItem.id
+  const filteredItems = item.order.items
+    .filter((orderItem: any) =>
+      item.line_items.some(
+        (lineItem: any) => lineItem.line_item_id === orderItem.id
+      )
     )
-  )
+    .map((orderItem: any) => {
+      const correspondingLineItem = item.line_items.find(
+        (lineItem: any) => lineItem.line_item_id === orderItem.id
+      )
+      return {
+        ...orderItem,
+        reason_id:
+          returnReason.find((r) => r.id === correspondingLineItem?.reason_id)
+            ?.label || "No reason provided",
+      }
+    })
 
   const currency_code = item.order.currency_code || "usd"
 
@@ -140,7 +154,7 @@ export const SingleOrderReturn = ({
                   <div className="flex justify-between w-1/2">
                     <p className="label-md !font-semibold text-primary">
                       <Badge className="bg-primary text-primary border rounded-sm">
-                        {item.customer_note || "No reason provided"}
+                        {item.reason_id || "No reason provided"}
                       </Badge>
                     </p>
                     <p className="label-md !font-semibold text-primary">

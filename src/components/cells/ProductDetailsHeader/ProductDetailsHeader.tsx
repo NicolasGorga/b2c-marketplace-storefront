@@ -11,6 +11,7 @@ import { Chat } from "@/components/organisms/Chat/Chat"
 import { SellerProps } from "@/types/seller"
 import { WishlistButton } from "../WishlistButton/WishlistButton"
 import { Wishlist } from "@/types/wishlist"
+import { toast } from "@/lib/helpers/toast"
 
 const optionsAsKeymap = (
   variantOptions: HttpTypes.StoreProductVariant["options"]
@@ -73,13 +74,20 @@ export const ProductDetailsHeader = ({
 
     setIsAdding(true)
 
-    await addToCart({
-      variantId: variantId,
-      quantity: 1,
-      countryCode: locale,
-    })
-
-    setIsAdding(false)
+    try {
+      await addToCart({
+        variantId: variantId,
+        quantity: 1,
+        countryCode: locale,
+      })
+    } catch (error) {
+      toast.error({
+        title: "Error adding to cart",
+        description: "Some variant does not have the required inventory",
+      })
+    } finally {
+      setIsAdding(false)
+    }
   }
 
   const variantStock =

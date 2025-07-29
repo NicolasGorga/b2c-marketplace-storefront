@@ -1,7 +1,7 @@
 import { UserNavigation } from "@/components/molecules/UserNavigation/UserNavigation"
 import { OrderReturnRequests } from "@/components/sections/OrderReturnRequests/OrderReturnRequests"
 import { retrieveCustomer } from "@/lib/data/customer"
-import { getReturns } from "@/lib/data/orders"
+import { getReturns, retrieveReturnReasons } from "@/lib/data/orders"
 
 export default async function ReturnsPage({
   searchParams,
@@ -9,6 +9,7 @@ export default async function ReturnsPage({
   searchParams: Promise<{ page: string; return: string }>
 }) {
   const { order_return_requests } = await getReturns()
+  const returnReasons = await retrieveReturnReasons()
 
   const user = await retrieveCustomer()
 
@@ -30,6 +31,7 @@ export default async function ReturnsPage({
             user={user}
             page={page}
             currentReturn={returnId || ""}
+            returnReasons={returnReasons}
           />
         </div>
       </div>

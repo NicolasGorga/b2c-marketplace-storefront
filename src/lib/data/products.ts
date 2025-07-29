@@ -67,6 +67,7 @@ export const listProducts = async ({
     }>(`/store/products`, {
       method: "GET",
       query: {
+        country_code: countryCode,
         category_id,
         collection_id,
         limit,

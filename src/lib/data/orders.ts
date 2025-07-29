@@ -15,7 +15,7 @@ export const retrieveOrderSet = async (id: string) => {
     .fetch<any>(`/store/order-set/${id}`, {
       method: "GET",
       headers,
-      cache: "force-cache",
+      cache: "no-cache",
     })
     .then(({ order_set }) => order_set)
     .catch((err) => medusaError(err))
@@ -64,10 +64,10 @@ export const createReturnRequest = async (data: any) => {
       body: JSON.stringify(data),
     }
   )
-    .then((res) => res)
+    .then(async (res) => await res.json())
     .catch((err) => medusaError(err))
 
-  return response.json()
+  return response
 }
 
 export const getReturns = async () => {
@@ -80,6 +80,7 @@ export const getReturns = async () => {
       method: "GET",
       headers,
       cache: "force-cache",
+      query: { fields: "*line_items.reason_id" },
     })
     .then((res) => res)
     .catch((err) => medusaError(err))
@@ -94,7 +95,7 @@ export const retriveReturnMethods = async (order_id: string) => {
     }>(`/store/shipping-options/return?order_id=${order_id}`, {
       method: "GET",
       headers,
-      cache: "force-cache",
+      cache: "no-cache",
     })
     .then(({ shipping_options }) => shipping_options)
     .catch(() => [])

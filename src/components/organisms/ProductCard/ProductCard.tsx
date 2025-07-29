@@ -6,9 +6,6 @@ import { HttpTypes } from "@medusajs/types"
 import { BaseHit, Hit } from "instantsearch.js"
 import clsx from "clsx"
 import LocalizedClientLink from "@/components/molecules/LocalizedLink/LocalizedLink"
-import { listProducts } from "@/lib/data/products"
-import { useEffect, useState } from "react"
-import { SkeletonProductCard } from "./SkeletonProductCard"
 import { getProductPrice } from "@/lib/helpers/get-product-price"
 
 export const ProductCard = ({
